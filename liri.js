@@ -1,13 +1,12 @@
 require('dotenv').config();
 const Spotify = require('node-spotify-api');
-const Twitter = require('twitter');
 require('dotenv').config();
 const request = require('request');
 const keys = require('./keys');
 const spotify = new Spotify(keys.spotify);
-const client = new Twitter(keys.twitter);
 const fs = require('fs');
 const ombdApiKey = keys.ombd.apikey;
+const owmApiKey = keys.owm.apikey;
 
 function processCommands() {
   const command = process.argv[2];
@@ -21,10 +20,13 @@ function processCommands() {
     case 'do-what-it-says':
       doWhatItSays();
       break;
+    case 'get-weather':
+      getWeather();
+      break;
     default:
       console.log('--------------------');
       console.log(
-        'Please enter spotify-this-song or movie-this followed by your query, or do-what-it-says to get the command from the random.txt file'
+        'Please enter spotify-this-song, movie-this or get-weather followed by your query, or do-what-it-says to get the command from the random.txt file'
       );
       console.log('--------------------');
   }
@@ -74,7 +76,7 @@ function omdbMovie(movie) {
   }
   const ombdURL = `http://www.omdbapi.com/?t=${movie}&plot=short&tomatoes=true&apikey=${ombdApiKey}`;
   request(ombdURL, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
+    if (!error && response.statusCode === 200) {
       body = JSON.parse(body);
       console.log('----------------------------');
       console.log('* Title: ' + body.Title);
@@ -99,14 +101,33 @@ function omdbMovie(movie) {
   });
 }
 
+function getWeather(city) {
+  if (process.argv[3]) {
+    city = '';
+    process.argv.forEach((arg, index) => {
+      if (index >= 3) {
+        city += arg + ' ';
+      }
+    });
+  } else if (!city) {
+    movie = 'Dallas';
+  }
+  console.log(city);
+  const owmURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${owmApiKey}`;
+  request(owmURL, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      body = JSON.parse(body);
+      console.log(body);
+    }
+  });
+}
+
 function doWhatItSays() {
   fs.readFile('random.txt', 'utf8', function(err, data) {
     if (err) {
       console.log('error: ', err);
     } else {
       const dataArr = data.split(', ');
-      console.log(dataArr[0]);
-      console.log(dataArr[1]);
       switch (dataArr[0]) {
         case 'spotify-this-song':
           spotifySong(dataArr[1]);
