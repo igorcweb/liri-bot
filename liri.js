@@ -26,7 +26,7 @@ function processCommands() {
     default:
       console.log('--------------------');
       console.log(
-        'Please enter spotify-this-song, movie-this or get-weather followed by your query, or do-what-it-says to get the command from the random.txt file'
+        'Please enter "spotify-this-song", "movie-this" or "get-weather" followed by your query, or "do-what-it-says" to get the command from the random.txt file'
       );
       console.log('--------------------');
   }
@@ -112,26 +112,26 @@ function getWeather(city) {
   } else if (!city) {
     city = 'Dallas';
   }
-  console.log(city);
   const owmURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${owmApiKey}`;
   request(owmURL, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       body = JSON.parse(body);
       console.log('----------------------');
-      console.log('Here is the weather in ' + city + ':');
+      console.log('Here is the current weather in ' + city + ':');
       console.log(' ');
       console.log(body.weather[0].description);
       console.log(' ');
       console.log(Math.round(body.main.temp) + '°F');
+    } else {
+      console.log('-------------------');
+      console.log('Please enter correct city');
     }
   });
 }
 
 function doWhatItSays() {
-  fs.readFile('random.txt', 'utf8', function(err, data) {
-    if (err) {
-      console.log('error: ', err);
-    } else {
+  fs.readFile('random.txt', 'utf8', function(error, data) {
+    if (!error) {
       const dataArr = data.split(', ');
       switch (dataArr[0]) {
         case 'spotify-this-song':
@@ -141,6 +141,8 @@ function doWhatItSays() {
           omdbMovie(dataArr[1]);
           break;
       }
+    } else {
+      console.log('error: ', error);
     }
   });
 }
