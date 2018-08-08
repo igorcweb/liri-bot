@@ -6,24 +6,28 @@ const request = require('request');
 const keys = require('./keys');
 const spotify = new Spotify(keys.spotify);
 const client = new Twitter(keys.twitter);
-//OMBD API KEY
-const apikey = keys.ombd.apikey;
+const fs = require('fs');
+const ombdApiKey = keys.ombd.apikey;
 
-const command = process.argv[2];
-
-switch (command) {
-  case 'spotify-this-song':
-    spotifySong();
-    break;
-  case 'movie-this':
-    omdbMovie();
-    break;
-  default:
-    console.log('--------------------');
-    console.log(
-      'Please enter spotify-this-song, movie-this or do-what-it-says followed by your query.'
-    );
-    console.log('--------------------');
+function processCommands() {
+  const command = process.argv[2];
+  switch (command) {
+    case 'spotify-this-song':
+      spotifySong();
+      break;
+    case 'movie-this':
+      omdbMovie();
+      break;
+    case 'do-what-it-says':
+      doWhatItSays();
+      break;
+    default:
+      console.log('--------------------');
+      console.log(
+        'Please enter spotify-this-song or movie-this followed by your query, or do-what-it-says to get the command from the random.txt file'
+      );
+      console.log('--------------------');
+  }
 }
 
 function spotifySong(song) {
@@ -34,7 +38,7 @@ function spotifySong(song) {
         song += arg + ' ';
       }
     });
-  } else {
+  } else if (!song) {
     song = 'The Sign Ace of Base';
   }
 
@@ -65,13 +69,13 @@ function omdbMovie(movie) {
         movie += arg + ' ';
       }
     });
-  } else {
+  } else if (!movie) {
     movie = 'Mr Nobody';
   }
-  const ombdURL = `http://www.omdbapi.com/?t=${movie}&plot=short&tomatoes=true&apikey=${apikey}`;
+  const ombdURL = `http://www.omdbapi.com/?t=${movie}&plot=short&tomatoes=true&apikey=${ombdApiKey}`;
   request(ombdURL, function(error, response, body) {
     if (!error && response.statusCode == 200) {
-      var body = JSON.parse(body);
+      body = JSON.parse(body);
       console.log('----------------------------');
       console.log('* Title: ' + body.Title);
       console.log(' ');
@@ -94,3 +98,25 @@ function omdbMovie(movie) {
     }
   });
 }
+
+function doWhatItSays() {
+  fs.readFile('random.txt', 'utf8', function(err, data) {
+    if (err) {
+      console.log('error: ', err);
+    } else {
+      const dataArr = data.split(', ');
+      console.log(dataArr[0]);
+      console.log(dataArr[1]);
+      switch (dataArr[0]) {
+        case 'spotify-this-song':
+          spotifySong(dataArr[1]);
+          break;
+        case 'movie-this':
+          omdbMovie(dataArr[1]);
+          break;
+      }
+    }
+  });
+}
+
+processCommands();
