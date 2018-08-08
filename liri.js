@@ -110,8 +110,9 @@ function getWeather(city) {
       }
     });
   } else if (!city) {
-    city = 'Dallas';
+    city = 'Dallas ';
   }
+  city = city.slice(0, -1);
   const owmURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${owmApiKey}`;
   request(owmURL, (error, response, body) => {
     if (!error && response.statusCode === 200) {
@@ -122,6 +123,7 @@ function getWeather(city) {
       console.log(body.weather[0].description);
       console.log(' ');
       console.log(Math.round(body.main.temp) + '°F');
+      console.log(' ');
     } else {
       console.log('-------------------');
       console.log('Please enter correct city');
