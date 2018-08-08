@@ -110,14 +110,19 @@ function getWeather(city) {
       }
     });
   } else if (!city) {
-    movie = 'Dallas';
+    city = 'Dallas';
   }
   console.log(city);
-  const owmURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${owmApiKey}`;
+  const owmURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=${owmApiKey}`;
   request(owmURL, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       body = JSON.parse(body);
-      console.log(body);
+      console.log('----------------------');
+      console.log('Here is the weather in ' + city + ':');
+      console.log(' ');
+      console.log(body.weather[0].description);
+      console.log(' ');
+      console.log(Math.round(body.main.temp) + '°F');
     }
   });
 }
