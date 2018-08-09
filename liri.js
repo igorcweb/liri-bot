@@ -82,7 +82,7 @@
       movie = 'Mr Nobody';
     }
     const ombdURL = `http://www.omdbapi.com/?t=${movie}&plot=short&tomatoes=true&apikey=${ombdApiKey}`;
-    request(ombdURL, function(error, response, body) {
+    request(ombdURL, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         body = JSON.parse(body);
         console.log('----------------------------');
@@ -158,7 +158,7 @@
   }
 
   function doWhatItSays() {
-    fs.readFile('random.txt', 'utf8', function(error, data) {
+    fs.readFile('random.txt', 'utf8', (error, data) => {
       if (!error) {
         const dataArr = data.split(', ');
         switch (dataArr[0]) {
@@ -167,6 +167,9 @@
             break;
           case 'movie-this':
             omdbMovie(dataArr[1]);
+            break;
+          case 'get-weather':
+            getWeather(dataArr[1]);
             break;
         }
       } else {
