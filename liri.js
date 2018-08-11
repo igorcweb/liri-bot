@@ -57,9 +57,15 @@
         console.log(' ');
         console.log('* Album: ', song.album.name);
         console.log('----------------------------');
-        const dataToAppend = `Artist: ${song.artists[0].name}, Song: ${
-          song.name
-        }, Preview Link: ${song.preview_url}, Album: ${song.album.name}`;
+        let dataToAppend = {
+          Artist: song.artists[0].name,
+          Song: song.name,
+          'Preview Link': song.preview_url,
+          Album: song.album.name
+        };
+
+        dataToAppend = JSON.stringify(dataToAppend);
+
         fs.appendFile('log.txt', dataToAppend, err => {
           if (err) throw err;
           console.log('The song data was appended to log.txt!');
@@ -103,13 +109,17 @@
         console.log('* Actors: ' + body.Actors);
         console.log('----------------------------');
         console.log(' ');
-        const dataToAppend = `Title: ${body.Title}, Release Year: ${
-          body.Year
-        }, IMDB Rating: ${body.imdbRating}, Rotten Tomatoes Rating: ${
-          body.tomatoRating
-        }, Country: ${body.Country}, Language: ${body.Language}, Plot: ${
-          body.Plot
-        }, Actors: ${body.Actors} `;
+        let dataToAppend = {
+          Title: body.Title,
+          'Release Year': body.Year,
+          'IMDB Rating': body.imdbRating,
+          'Rotten Tomatoes Rating': body.tomatoRating,
+          Country: body.Country,
+          Language: body.Language,
+          Plot: body.Plot,
+          Actors: body.Actors
+        };
+        dataToAppend = JSON.stringify(dataToAppend);
         fs.appendFile('log.txt', dataToAppend, err => {
           if (err) throw err;
           console.log('The movie data was appended to log.txt!');
@@ -143,9 +153,12 @@
         console.log(' ');
         console.log(Math.round(body.main.temp) + '°F');
         console.log(' ');
-        const dataToAppend = `Here is the current weather in ${city}: ${
-          body.weather[0].description
-        }, ${body.main.temp}°F}`;
+        let dataToAppend = {
+          City: city,
+          'Weather description': body.weather[0].description,
+          Temperature: Math.round(body.main.temp) + '°F'
+        };
+        dataToAppend = JSON.stringify(dataToAppend);
         fs.appendFile('log.txt', dataToAppend, err => {
           if (err) throw err;
           console.log('The weather data was appended to log.txt!');
